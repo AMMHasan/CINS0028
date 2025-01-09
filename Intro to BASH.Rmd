@@ -1,0 +1,613 @@
+---
+title: "Introduction to BASH"
+subtitle: "Specialist module CINS0028: Multi-omics and Cancer Evolution"
+author: "Dr A M Mahedi Hasan"
+date: "23-01-2025"
+output: html_notebook
+---
+
+### Preface
+This is an introduction to BASH (Bourne Again SHell). Please don't take the word literally, nor with a hint of the sequel of the spy movie in the realm of Bourne. Well, its very basic to begin with, but if you want to delve deep into BASH (or Shell language) and perform complex operations, you can do so. But we will stick to the basics for now.
+
+One thing to remember is that BASH is a scripting language, and it is used to automate tasks. It is a command language interpreter that executes commands read from the standard input or from a file. BASH also incorporates useful features from the Korn and C shells (ksh and csh). What the hell are those things? Well, they are other shell languages and I will mention those to the lecture class. Sometimes it's hard to distinguish the basic linux commands from the shell commands. To my view, they are the same to begin with, but the intricacies of BASH (or Shell scripting) comes later.
+
+
+I hope, by now you all know about the basic linux commands like `ls, echo, cat, head, grep` etc. So, let's start with the basics of BASH scripting. The most important aspect of a bash script (to my view of course) is, instead of executing your commands separately, you can accommodate all thes in a single file and execute it serially with a sungle command (*i.e.* running the BASH script).
+
+### BASH Scripting
+
+There are several key parts to a Bash script. The first thing you need to know is that every BASH script starts with a shebang `#!`. The first line of a BASH script has a shebang or hash-bang then the path to where Bash is (Most commonly that is /usr/bash): `#!/usr/bash`. Bash could be in a different location so you can check where Bash is using the command:
+```{bash}
+which bash
+```
+Then the rest of the file contains the BASH codes. Here is the example of a BASH script:
+
+```{bash}
+#!/bin/bash
+echo 'my first bash script'
+```
+
+Once your script is written you can save it and run it. The file extension is usually `.sh`. Though this is just a convention if you have the first line with the shebang, you can run the script without the `.sh` extension. You basically run the script using the command:
+
+```{bash}
+bash my_first_script.sh
+```
+
+Or you can make the script executable and run it using the command:
+```{bash}
+chmod +x my_first_script.sh
+./my_first_script.sh
+```
+
+
+Each line of a Bash script can be a shell command. The shell command can be a system command, a user-defined function, or a script. The shell command can be a simple command or a compound command (pipped). You are be able to write a chain of commands piped (I assume you know what a pipe is and how to use it by now) into each other in the terminal.
+
+
+
+### Standard streams
+
+Before going further down to more nitty-gritty of BASH scripting, let's learn a bit about inputs and outputs for your Bash scripts. 
+
+
+In BASH, there are three standard streams: `stdin`, `stdout`, and `stderr`. 
+
+`stdin` is the standard input stream of data (or information) going into the program, `stdout` is the standard output stream, and `stderr` is the standard error stream where errors and exceptions in the program are written to. The standard streams are connected to the terminal by default. 
+
+
+![](/Users/mahedi/Documents/Research/scripts/R/CINS0028/images/STD_stream.png)
+
+This graphical example represents what we just discussed conceptually. The standard output of the `cat` command, becomes the standard input for the `cut` command and so on until the pipe finishes which prints the last standard output to the terminal. This is the expected behaviour. Though if an error occurred at any time, the error would by default display in the terminal.
+
+The standard streams can be redirected to files or other programs using the redirection operators:
+  Using >1 at the end of a command and add a file name thereafter will redirect the standard output to a file. For example, `ls > file.txt` will redirect the output of the `ls` command to a file called `file.txt`.
+  Using 2> at the end of a command and add a file name thereafter will redirect the standard error to a file. For example, `ls 2> file.txt` will redirect the error output of the `ls` command to a file called `file.txt`.
+  
+### Arguments
+Another key concept for Bash scripting is the use of arguments. Bash scripts take arguments specified when making the execution call of the script. `ARGV` is a term to describe all the arguments that are fed into the script. 
+
+You can access the arguments using numerical dollar-sign notation `$`. The first argument being `$1` and so on. Some other special arguments are `$@` and `$*` which return all the arguments together. `$#` gives the number of arguments. Let's see an example of a script that takes arguments (save it as my_ARGV_script.sh).
+
+```{bash}
+
+#!/bin/bash
+echo "The first argument is $1"
+echo "The second argument is $2"
+
+echo "All the arguments are $@"
+echo "All the arguments are $*"
+
+echo "The number of arguments is $#"
+
+```
+
+Now run `bash my_ARGV_script.sh arg1 arg2 arg3 arg4` and see the output.
+
+
+### Variables in BASH
+
+#### Basic Variables
+
+Variables in BASH are defined by the user and can be used to store data. The syntax for defining a variable is `variable_name=value`. A very important information for you to remember (I would suggest you hard code it in your brain): there should be no gaps before or after the equal sign while assigning a value to a variable (in Bash). The value can be a string, number, or any other data type. The value can be accessed using the dollar sign `$` followed by the variable name. Let's see an example:
+
+```{bash}
+#!/bin/bash
+
+first_name_var="Mahedi"
+last_name_var="Hasan"
+
+echo "my name is" $first_name_var $last_name_var
+```
+
+You can name the variables as you like and it is good practice to name them something which makes sense. Remember that the `$` sign is very important, otherwise the interpreter will not understand that you are referencing to a variable, rather it will think it as any other character string for echoing (not sure that's a verb, like google ...). 
+
+In BASH, using different types of quotation marks can mean different things, when creating variables and printing. Single quotation marks means that whatever is between them is interpreted literally. Double quotation is similar to single quotation marks, but it will understand dollar-sign notation and backticks that occur between the quotation marks. Backticks creates a shell within a shell. That is, it sends whatever is between the backticks out to a new shell and takes the results back into the variable. Let's see with an example:
+
+```{bash}
+
+#!/bin/bash
+
+first_name_var="Mahedi"
+last_name_var="Hasan"
+
+echo 'my name is $first_name_var $last_name_var'
+echo "my name is $first_name_var $last_name_var"
+
+# date is a function that print the current date
+
+echo "Today is `date`"
+
+# or 
+
+echo "Today is $(date)"
+```
+By the way, you find that I put comments starting with a hash `#` sign. This is a good practice to comment your code. It helps you to understand what you did when you come back to your code after a long time (or sometime, the next day).
+
+
+#### Numeric Variables and Arithmetic Operations
+
+Though arithmetic operation is not the main focus of BASH scripting, you can still perform arithmetic operations in BASH. To begin with, you cannot natively do arithmetic in Bash, like - `1 + 1` (like you do in R consol). If you try the following in the Bash terminal, you will get an error like this. `-bash: 1: command not found`.
+
+I will discuss two ways to perform arithmetic operations in BASH:
+
+1. Using `expr` command: You can use the `expr` command to perform arithmetic operations. The `expr` command evaluates an expression and writes the result on the standard output. The expression may be a simple arithmetic operation of the form:
+
+```{bash}
+expr 1 + 1
+
+# an alternative way to do the same thing
+
+expr $(( 1 + 1))
+```
+
+`expr` has a big limitation though. It cannot handle decimal places. If you do the following in the terminal, this will be the error you get: `expr 1.1 + 1.1`.
+
+2. Using `bc` (basic calculator) command: The `bc` command is a command-line calculator. It is used to perform simple arithmetic operations. The `bc` command can handle decimal places. The following example shows how to use the `bc` command:
+
+```{bash}
+echo "1.1 + 1.1" | bc
+
+# you can use the scale option to specify the number of decimal places
+
+echo "scale=3; (1.1 + 1.1)/3" | bc
+```
+
+
+We can generate two numeric variables and perform arithmetic operations on them and print the result out. Let's see an example:
+
+```{bash}
+
+#!/bin/bash
+
+num1=10
+num2=20
+
+echo "The sum of $num1 and $num2 is $(echo "$num1 + $num2" | bc)" # this is another example shell-within-shell
+echo "The difference of $num1 and $num2 is $(echo "$num1 - $num2" | bc)"
+echo "The product of $num1 and $num2 is $(echo "$num1 * $num2" | bc)"
+echo "The division of $num1 and $num2 is $(echo "scale=3;$num1 / $num2" | bc)"
+
+```
+
+
+<!-- You can also use the `read` command to take input from the user. The `read` command reads a single line from the standard input, or from the file descriptor FD if the -u option is supplied. The line is split into fields as with word splitting, and the first word is assigned to the first NAME, the second word to the second NAME, and so on, with any leftover words assigned to the last NAME. If there are fewer words read from the input than names, the remaining names are assigned empty values. The characters in IFS are used to split the line into words. The backslash character ‘\’ may be used to remove any special meaning for the next character read and for line continuation. The following example shows how to use the `read` command: -->
+
+```{bash echo=F}
+
+#!/bin/bash
+
+echo "Enter your name: "
+read name
+echo "Hello $name"
+
+```
+
+
+
+
+
+
+### Arrays in BASH
+
+So far, I have discussed (a bit) single value under a variable. However, if you have to deal with more than one value, you can use arrays. This is similar to vector in `R` or list in `python`. An array is a variable that can store multiple values. The values are stored in the array with a space between them (contrary to comma separated values in `R`). 
+
+There are two types of arrays in BASH: *indexed arrays* and *associative arrays*. In this lecture, I will discuss indexed arrays. An indexed array is an array in which the keys are represented by integers. The syntax for defining an indexed array is `array_name=(value1 value2 value3)`. The values can be accessed using the index of the array. The index of the array starts from 0 (thus called a zero-indexing system). Let's see an example:
+
+```{bash}
+
+#!/bin/bash
+
+# declare an empty array
+declare -a fruits
+
+# defining an array
+declare -a fruits=("apple" "banana" "orange" "grape")
+
+# or directly
+fruits=("apple" "banana" "orange" "grape")
+
+# accessing the values
+echo ${fruits[0]}
+echo ${fruits[1]}
+
+# accessing a range of values
+echo ${fruits[@]:1:2}
+
+# accessing all the values
+echo ${fruits[@]}
+echo ${fruits[*]}
+
+# accessing the length of the array
+echo ${#fruits[@]}
+echo ${#fruits[*]}
+
+# accessing the length of a specific element
+echo ${#fruits[0]}
+
+# adding a new element
+fruits[4]="mango" # don't use $ in the front of the index
+
+# removing an element
+unset fruits[2]
+
+```
+
+
+### Conditional Statements in BASH
+
+Conditional statements are used to perform different actions based on different conditions. The syntax for a basic `IF` conditional statement is:
+
+```{bash}
+if [ condition ]
+then
+    statement
+fi
+
+# to extend with an else statement:
+
+if [ condition ]
+then
+    statement
+else
+    statement
+fi
+
+```
+
+The `if` statement is followed by a condition in square brackets. The `then` keyword is used to start the block of code that will be executed if the condition is true. The `fi` keyword is used to end the block of code. The condition can be a comparison between two values, a file test, or a string test. The comparison operators are:
+
+- `-eq` : equal
+- `-ne` : not equal
+- `-gt` : greater than
+- `-lt` : less than
+- `-ge` : greater than or equal to
+- `-le` : less than or equal to
+
+The following example shows how to use the `if` statement:
+
+```{bash}
+
+#!/bin/bash
+
+num1=10
+num2=20
+
+if [ $num1 -eq $num2 ]
+then
+    echo "The numbers are equal"
+else
+    echo "The numbers are not equal"
+fi
+
+```
+
+You can also use the `elif` keyword to add more conditions to the `if` statement. The `elif` keyword is used to add more conditions to the `if` statement. The following example shows how to use the `elif` statement:
+
+```{bash}
+
+#!/bin/bash
+
+num1=10
+num2=20
+
+if [ $num1 -eq $num2 ]
+then
+    echo "The numbers are equal"
+elif [ $num1 -gt $num2 ]
+then
+    echo "The first number is greater than the second number"
+else
+    echo "The first number is less than the second number"
+fi
+
+```
+
+You cad add multiple conditions using the `&&` (also `AND`) and `||` (also `OR`) operators. The `&&` operator is used to execute the second command if the first command is true. The `||` operator is used to execute the second command if the first command is false. The following example shows how to use the `&&` and `||` operators:
+
+```{bash}
+
+#!/bin/bash
+
+num1=10
+num2=20
+
+if [ $num1 -eq $num2 ] && [ $num1 -gt 5 ]
+then
+    echo "The numbers are equal and the first number is greater than 5"
+fi
+
+# with OR
+
+if [ $num1 -eq $num2 ] || [ $num1 -gt 5 ]
+then
+    echo "The numbers are equal or the first number is greater than 5"
+fi
+
+```
+
+
+
+
+### Loops in BASH: for loop and while statements
+
+Loops are used to execute a block of code multiple times. There are three types of loops in BASH: `for` loop, `while` loop (or some says it statement), and `until` loop. I will stick to the first two.
+
+The `for` loop is used to iterate over a list of items. The syntax for a basic `for` loop is:
+
+```{bash}
+for item in list
+do
+    statement
+done
+
+```
+
+The `for` loop is followed by the `item` keyword, the `in` keyword, and a list of items. The `do` keyword is used to start the block of code that will be executed for each item in the list. The `done` keyword is used to end the block of code. The list of items can be a range of numbers, a list of strings, or the values of an array. The following example shows how to use the `for` loop:
+
+```{bash}
+
+#!/bin/bash
+
+# iterating over a range of numbers
+for i in {1..5..2} # this is an interesting way to generate a range of numbers
+do
+    echo $i
+done
+
+# iterating over a list of strings
+for fruit in apple banana orange grape
+do
+    echo $fruit
+done
+
+# iterating over the values of an array
+fruits=("apple" "banana" "orange" "grape")
+for fruit in ${fruits[@]}
+do
+    echo $fruit
+done
+
+# I frequently use the for loop to iterate over the files in a directory
+
+for file in /path/to/directory/*.txt
+do
+    echo $file
+done
+
+
+
+```
+
+
+The `while` loop is used to execute a block of code as long as a condition is true. The syntax for a basic `while` loop is:
+
+```{bash}
+while [ condition ]
+do
+    statement
+done
+
+```
+
+The `while` loop is followed by a condition (in square brackets, here, contracy to a set of items to iterate over). The `do` keyword is used to start the block of code that will be executed as long as the condition is true. The `done` keyword is used to end the block of code. The condition can be a comparison between two values, a file test, or a string test. The following example shows how to use the `while` loop:
+
+```{bash}
+
+#!/bin/bash
+
+i=1
+
+while [ $i -le 5 ]
+do
+    echo $i
+    i=$((i+1))
+done
+
+```
+
+But, be aware of infinite loops. An infinite loop is a loop that will run forever. The following example shows how to create an infinite loop:
+
+```{bash}
+
+#!/bin/bash
+
+while true
+do
+    echo "This is an infinite loop"
+done
+
+```
+
+
+
+### Functions in BASH
+
+Functions are a core part of most programming languages. If you have used them in R or Python you will know some of these advantages. Firstly, functions allow a reusable section of code that reduces repetition. Therefore you can make neat, compartmentalized code. That is, the code is modular so you can work on, add or subtract different sections as needed. Finally, functions allow for easy sharing of code. If you know what the function's purpose, the inputs and outputs are then you can use it.
+
+
+Functions are used to group a set of commands together to perform a specific task. The syntax for defining a function is:
+
+```{bash}
+
+function_name () {
+    statement
+}
+
+
+```
+
+You start by writing a name for your function. The `function_name` is the name of the function. Make sure it is a sensible name that makes sense. This enhances code readability. The `()` is used to define the function. Then add curly brackets (or braces). The `statement` is the block of code that will be executed when the function is called. Inside here place the code to run when the function is called. You can use anything you learned so far such as loops, IF statements, calling shell-within-a-shell constructs and more. You can optionally return something. The following example shows how to define a function:
+
+
+```{bash}
+
+#!/bin/bash
+
+# defining a function
+
+print_name () {
+    echo "My name is Mahedi Hasan"
+}
+
+# calling the function
+
+print_name
+
+
+# passing arguments to a function
+
+print_name () {
+    echo "My name is $1 $2"
+}
+
+print_name Mahedi Hasan
+
+# returning a value from a function
+
+add_numbers () {
+    echo $(($1 + $2))
+}
+
+result=$(add_numbers 10 20)
+
+echo $result
+
+```
+
+
+
+
+
+```{bash echo=FALSE}
+
+#!/bin/bash
+
+# Fahrenheit to Celsius Bash function
+# defining a function
+
+fahrenheit_to_celsius () {
+    celsius=$(echo "scale=2;(5/9)*($1-32)" | bc)
+    echo $celsius
+}
+
+# calling the function
+
+result=$(fahrenheit_to_celsius 98.6)
+
+echo $result
+
+
+```
+
+
+
+### File Operations in BASH
+
+You can perform file operations in BASH. The following example shows how to check if a file exists, if a file is readable, writable, or executable, and how to create a file:
+
+```{bash}
+
+#!/bin/bash
+
+# check if a file exists
+
+if [ -e file.txt ]
+then
+    echo "The file exists"
+else
+    echo "The file does not exist"
+fi
+
+# check if a file is readable
+
+if [ -r file.txt ]
+then
+    echo "The file is readable"
+else
+    echo "The file is not readable"
+fi
+
+# check if a file is writable
+
+if [ -w file.txt ]
+then
+    echo "The file is writable"
+else
+    echo "The file is not writable"
+fi
+
+# check if a file is executable
+
+if [ -x file.txt ]
+then
+    echo "The file is executable"
+else
+    echo "The file is not executable"
+fi
+
+# create a file
+
+touch new_file.txt
+
+# remove a file
+
+rm new_file.txt
+
+
+```
+
+
+
+
+### Task scheduling in BASH
+
+There are many situations where being able to schedule scripts is helpful. Firstly, you may have regular tasks to be done. Such as daily, weekly or multiple times per day. You could try to remind yourself - but what if you forget or are away? Secondly, you can better use resources. Such as running scripts early in the morning when server usage is low. Learning to schedule with cron is an essential skill in modern data infrastructures.
+
+The program 'cron' has been part of unix-like systems for a long time. Since the 70's in fact. We humans have been lazy for that long! The name comes from the Greek word for time, chronos. Cron is a time-based job scheduler in Unix-like operating systems. Cron is driven by a crontab (cron table) file, a configuration file that specifies shell commands to run periodically on a given schedule. The crontab files are stored where the lists of jobs and other instructions to the cron daemon are kept. Users can have their own individual crontab files and often there is a system-wide crontab file (usually in /etc or a subdirectory of /etc) that only system administrators can edit.
+
+The following example shows how to schedule a BASH script using cron:
+
+```{bash}
+
+#!/bin/bash
+
+# create a BASH script
+
+echo "echo 'Hello World'" > hello_world.sh
+
+# make the script executable
+
+chmod +x hello_world.sh
+
+# open the crontab file
+
+crontab -e
+
+# add the following line to the crontab file
+
+5 1 * * * /path/to/hello_world.sh
+
+15 14 * * 7 /path/to/hello_world.sh
+
+# save and exit the crontab file
+
+```
+
+Let's walk through some example cronjobs. There are minutes, hours, days of the month, months of the year and days of the week. The default (just a star) means to run at every interval.
+In the first example. The minutes star is 5 (meaning 5 minutes past the hour). Which hour? Well, the hours star is 1 (meaning after 1am). The last three are all stars, meaning 'every'. So overall, we run myscript.sh every day at 1:05am. 
+
+In this second example. The minutes star is 15 (meaning 15 minutes past the hour), the hours star is 14 (meaning after 2pm). The stars for day-of-month and month-of-year are 'every'. The last star is day 7 (on Sundays). So overall we run myscript.sh at 2:15pm every Sunday.
+
+
+
+### Conclusion
+
+This is a very basic introduction to BASH scripting. There are many more things you can do with BASH scripting. You can use BASH scripting to automate tasks, perform complex operations, and more. I hope this introduction has given you a good starting point for learning BASH scripting. If you have any questions, feel free to ask. I will be happy to help. Thank you for reading.
+
+
+
+
+
+
+
+
+

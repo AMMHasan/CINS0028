@@ -1,0 +1,198 @@
+---
+title: "Basic commands in Linux"
+author: "Dr A M Mahedi Hasan"
+date: "23-01-2025"
+output:
+  pdf_document: default
+  html_notebook: default
+subtitle: "Specialist module CINS0028: Multi-omics and Cancer Evolution"
+---
+
+### Introduction
+This notebook introduces some basic Linux commands for navigating directories, managing files, dealing with permissions and working with text files.
+
+
+### Printing a message on the terminal (or save it in a file)
+We use `echo` to print a message followed by the message in quotes.
+
+```{bash}
+
+echo "Hello, World!"
+
+```
+
+### Basic Directory Navigation
+
+To get started with navigating through directories, let’s look at some essential commands.
+
+The `pwd` command prints the current working directory.
+
+```{bash}
+
+pwd
+
+```
+
+The `ls`command lists files and directories in the current directory. You can use flags like `-l` for detailed information or `-a` to show hidden files.
+
+```{bash}
+# Listing Files and Directories
+
+ls -l
+
+# Including hidden files
+
+ls -la
+
+```
+
+Use the cd command to change directories. For example, to move to the home directory:
+
+```{bash}
+# Changing Directories
+
+# Go to the home directory
+
+cd ~
+
+# or simply
+
+cd
+
+# Move up one directory
+
+cd ..
+
+```
+
+### Working with Files and Directories 
+To create a new directory, use `mkdir` followed by the directory name. To create a new file, use `touch` followed by the file name. To move or rename a file, use `mv` followed by the file name and the new location or name. To copy a file, use `cp` followed by the file name and the new location. But, in the case of copying a folder (or directory), use `cp -r` command. To delete a file, use `rm` followed by the file name. To delete a directory, use `rm -r` followed by the directory name.
+
+```{bash}
+# Creating Files and Directories
+ 
+mkdir my_new_directory
+
+touch my_new_file.txt
+
+# Moving and Renaming Files
+
+mv my_new_file.txt my_new_directory/
+
+mv my_new_directory/my_new_file.txt my_new_directory/renamed_file.txt
+
+
+# Copying Files
+
+cp my_new_directory/renamed_file.txt copy_of_file.txt
+
+# Copy directory recursively
+
+cp -r my_new_directory/ copy_of_directory/
+
+# Deleting Files and Directories
+
+rm copy_of_file.txt
+
+rm -r copy_of_directory/
+
+```
+
+
+### Viewing and Editing Files
+There several commands to view and edit files. The `cat` command displays the entire file. The `less` command displays a file one page at a time. The `head` command displays the beginning of a file, and the `tail` command displays the end of a file. The `vim` command opens a file in the vim text editor.
+```{bash}
+# Viewing total file contents
+
+cat my_new_directory/renamed_file.txt
+
+# for viewing a chunck of a file at a time, use less. For structured text files, like tables, use -S parameter
+
+less my_new_directory/renamed_file.txt
+
+
+# Display beginning of the file (first 10 lines). You can select how many lines to display by using -n parameter
+
+head my_new_directory/renamed_file.txt
+
+# Display end of the file (last 10 lines). You can select how many lines to display by using -n parameter
+
+tail my_new_directory/renamed_file.txt
+
+# Editing Files with nano (interactive, opens in terminal) or vim 
+
+vim my_new_directory/renamed_file.txt
+
+```
+
+### Searching for files
+Finding a file is often necessary in a directory with many files. The `find` command searches for files in a directory and its subdirectories. You can specify how many layers of subdirectories to search. For example, to search for a file named `renamed_file.txt` in the current directory and its subdirectories:
+```{bash}
+find . -name "renamed_file.txt"
+
+find . -maxdepth 3 -name "renamed_file.txt"
+
+```
+
+### Searching a text in a file and other utilities for interrogating a text file
+The `grep` command searches for a text pattern in a file. The `sed` command replaces a text pattern with another text. The `cut` command extracts a column from a text file. The `sort` command sorts a text file. The `uniq` command removes duplicate lines from a text file. The `wc` command counts the number of lines (`-l`), words (`-w`), and characters in a text file.
+
+```{bash}
+grep "Hello" my_new_directory/renamed_file.txt
+
+sed 's/Hello/Hi/g' my_new_directory/renamed_file.txt
+
+cut -d " " -f 1 my_new_directory/renamed_file.txt
+
+sort my_new_directory/renamed_file.txt
+
+uniq my_new_directory/renamed_file.txt
+
+wc my_new_directory/renamed_file.txt
+
+wc -l my_new_directory/renamed_file.txt
+
+
+```
+
+### Piping and Redirection
+Piping and redirection are powerful features in Linux. Piping allows you to send the output of one command to another command. Redirection allows you to send the output of a command to a file. For example, to list files in the current directory and search for a file named `renamed_file.txt`:
+
+```{bash}
+
+# Piping
+
+ls -l | grep "renamed_file.txt"
+
+# Redirection
+
+ls -l > my_new_directory/file_list.txt
+
+```
+
+### Downloading files from the internet
+You can download files from the internet using the `wget` command followed by the URL of the file. For example, to download a file named `README.md` from a GitHub repository:
+
+```{bash}
+
+wget https://raw.githubusercontent.com/ahmhasan/Path/main/README.md
+
+```
+
+
+### Permissions
+Remember that this is a slippery slope. Be careful when changing permissions on files and directories.
+
+```{bash}
+# Viewing Permissions
+
+ls -l my_new_directory/
+
+# Changing Permissions
+chmod +x my_new_directory/renamed_file.txt
+
+```
+
+### Conclusion
+These basic Linux commands are foundation for file and directory management. With practice, you'll find navigating and managing files in Linux more intuitive.
+
